@@ -1,5 +1,13 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+//自定义属性，可以通过rootProject.ext访问到
+ext {
+    compileSdkVersion = 29
+    buildToolsVersion = "29.0.2"
+
+    local = 'Hello from build.gradle'
+}
+
 buildscript {
     
     repositories {
@@ -26,3 +34,17 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+
+task printProperties {
+    println local
+    //读取properties中的自定义属性
+    println propertiesFile
+    //如果从命令行执行这个task，并且带有cmd参数，则这个if会满足
+    if (project.hasProperty('cmd')) {
+        println cmd
+    }
+}
+
+//重载默认任务(默认任务是help)
+defaultTasks('clean', 'assembleDebug')

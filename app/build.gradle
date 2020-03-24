@@ -1,8 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "29.0.2"
+//    compileSdkVersion 29
+//    buildToolsVersion "29.0.2"
+
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "com.lloydfinch.gradleforandroid"
@@ -17,10 +20,16 @@ android {
     buildTypes {
 
         debug {
-            
+            buildConfigField "boolean", "LOGABLE", "true"
+            buildConfigField "String", "URL", '"test"'
+            resValue "string", "app_name2", "app_debug"
         }
 
         release {
+            buildConfigField "boolean", "LOGABLE", "false"
+            buildConfigField "String", "URL", '"online"'
+            resValue "string", "app_name2", "app_release"
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
