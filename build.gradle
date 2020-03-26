@@ -13,6 +13,10 @@ buildscript {
     repositories {
         google()
         jcenter()
+
+        flatDir {
+            dirs 'aars'
+        }
         
     }
     dependencies {
@@ -35,16 +39,15 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
+//重载默认任务(默认任务是help)
+defaultTasks('clean', 'assembleDebug')
+
 
 task printProperties {
     println local
-    //读取properties中的自定义属性
     println propertiesFile
-    //如果从命令行执行这个task，并且带有cmd参数，则这个if会满足
+
     if (project.hasProperty('cmd')) {
         println cmd
     }
 }
-
-//重载默认任务(默认任务是help)
-defaultTasks('clean', 'assembleDebug')
