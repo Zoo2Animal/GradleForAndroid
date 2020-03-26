@@ -51,3 +51,11 @@ task printProperties {
         println cmd
     }
 }
+
+task printHello {
+    print "hello "
+    if (project.hasProperty('pname')) {
+        println pname
+    }
+}
+
