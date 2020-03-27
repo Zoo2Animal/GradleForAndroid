@@ -13,7 +13,6 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -33,6 +32,22 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
+        /**
+         * 使用debug构建来初始化staging构建
+         */
+        staging.initWith(buildTypes.debug)
+
+        /**
+         * 添加一个构建
+         */
+        staging {
+            applicationIdSuffix ".staging"
+            versionNameSuffix "-staging"
+            buildConfigField "String", "URL", '"staging"'
+            //覆盖debug构建中的属性值
+            debuggable = false
+        }
     }
     compileOptions {
         sourceCompatibility = 1.8
@@ -41,6 +56,47 @@ android {
 
     viewBinding {
         enabled true
+    }
+
+
+    /**
+     * 多渠道
+     */
+    productFlavors {
+        //flavor纬度，flavor里面必须有这个数组中的一个
+        flavorDimensions("versionCode")
+        red {
+            applicationId 'com.gradleforandroid.red'
+            versionCode 3
+        }
+
+        blue {
+            applicationId 'com.gradleforandroid.blue'
+            minSdkVersion 18
+            versionCode 4
+        }
+
+        free {
+            versionCode 5
+        }
+
+        paid {
+            versionCode 6
+        }
+    }
+
+}
+
+/**
+ * 定义variant过滤器
+ */
+android.variantFilter { variant ->
+    if (variant.buildType.name == 'release') {
+        variant.getFlavors().each() { flavor ->
+            if (flavor.name == 'blue') {
+                variant.setIgnore(true)
+            }
+        }
     }
 
 }
@@ -56,4 +112,9 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation group: 'androidx.appcompat', name: 'appcompat', version: '1.1.0'
+
+    //仅限debug构建的依赖(不是debug的构建就不依赖)
+    debugImplementation 'androidx.test.ext:junit:1.1.1'
+    //仅限staging构建的依赖
+    stagingImplementation 'androidx.test.ext:junit:1.1.1'
 }
