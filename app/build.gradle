@@ -1,4 +1,6 @@
-apply plugin: 'com.android.application'
+//apply plugin: 'com.android.application'
+//上面这句的等价代码:这是groovy的写法，参数是一个map，函数调用不需要括号
+project.apply([plugin: 'com.android.application'])
 
 android {
 //    compileSdkVersion 29
