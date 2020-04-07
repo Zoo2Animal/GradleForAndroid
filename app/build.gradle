@@ -137,3 +137,48 @@ dependencies {
 task printName {
     println("this is app")
 }
+
+/**
+ * task里面function的执行顺序
+ * doFirst()会头插
+ * doLast()会尾插
+ */
+task mindTheOrder {
+    println("mindTheOrder")
+
+    doFirst {
+        println("doFirst1")
+    }
+
+    doFirst {
+        println("doFirst2")
+    }
+
+    doLast {
+        println("doLast1")
+    }
+
+    doLast {
+        println("doLast2")
+    }
+}
+//指定mindTheOrder在printName后面执行，不产生任何依赖，执行mindTheOrder不会触发printName执行
+mindTheOrder.mustRunAfter(printName)
+
+//指定mindTheOrder依赖printName，同时也指定了顺序，执行mindTheOrder会触发printName执行
+mindTheOrder.dependsOn(printName)
+
+/**
+ * 读取配置的密码
+ */
+task getReleasePassword {
+    def password = ''
+    if (rootProject.file('private.properties').exists()) {
+        Properties properties = new Properties()
+        properties.load(rootProject.file('private.properties').newDataInputStream())
+        password = properties.getProperty('release.password')
+    }
+    println("release password is " + password)
+}
+
+
