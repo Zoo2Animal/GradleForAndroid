@@ -1,14 +1,22 @@
 package com.lloydfinch.gradleforandroid;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.webkit.WebViewClient;
 
 import com.lloydfinch.gradleforandroid.databinding.ActivityMainBinding;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 /**
  * @author lloydfinch
@@ -28,11 +36,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.btnStart.setOnClickListener(v -> {
-            start();
+            // start();
+
+            // testBrodcastReceiver();
+
+            // testFragmentOnActivityResult();
+
+            testGray();
         });
 
         binding.btnStop.setOnClickListener(v -> {
-            stop();
+            // loadBaidu();
+            // stop();
+
+            resetGray();
         });
 
         binding.btnStop.post(new Runnable() {
@@ -44,6 +61,9 @@ public class MainActivity extends AppCompatActivity {
 
         // testViewPost();
         testViewTreeObserver();
+
+
+        loadBaidu();
     }
 
     @Override
@@ -135,5 +155,55 @@ public class MainActivity extends AppCompatActivity {
         int width = root.getMeasuredWidth();
         int height = root.getMeasuredHeight();
         Log.e(TAG, "printRootSize: [width = " + width + ", height = " + height + "]");
+    }
+
+    private void testBrodcastReceiver() {
+        Intent intent = new Intent(this, MyReceiver.class);
+        ComponentName componentName = new ComponentName(this, MyReceiver.class);
+        // intent.setComponent();
+        intent.setAction("com.lloydfinch.fuck");
+        sendBroadcast(intent);
+    }
+
+    private void testFragmentOnActivityResult() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().add(android.R.id.content, new FirstFragment(), "first").commit();
+
+        // startActivityForResult(new Intent(this, SecondActivity.class), 100);
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: ");
+    }
+
+
+    /**
+     * 将app灰度处理
+     * 可以在baseActivity使用
+     * 或者水使用application.registerActivityLifecycleCallbacks();在里面遍历Activity来设置
+     */
+    private void testGray() {
+        View decorView = getWindow().getDecorView();
+        Paint paint = new Paint();
+        ColorMatrix colorMatrix = new ColorMatrix();
+        colorMatrix.setSaturation(0);
+        paint.setColorFilter(new ColorMatrixColorFilter(colorMatrix));
+        decorView.setLayerType(View.LAYER_TYPE_HARDWARE, paint);
+    }
+
+    private void resetGray() {
+        getWindow().getDecorView().setLayerType(View.LAYER_TYPE_HARDWARE, null);
+    }
+
+    /**
+     * 加载百度
+     */
+    private void loadBaidu() {
+        binding.webView.getSettings().setJavaScriptEnabled(true);
+        binding.webView.setWebViewClient(new WebViewClient());
+        binding.webView.loadUrl("https://www.baidu.com");
     }
 }

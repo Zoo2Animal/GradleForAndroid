@@ -72,7 +72,7 @@ android {
 
         blue {
             applicationId 'com.gradleforandroid.blue'
-            minSdkVersion 18
+            minSdkVersion 19
             versionCode 4
         }
 
@@ -108,6 +108,8 @@ dependencies {
     //version可以确保依赖库不会自动更新
 //    implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.13'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -117,4 +119,19 @@ dependencies {
     debugImplementation 'androidx.test.ext:junit:1.1.1'
     //仅限staging构建的依赖
     stagingImplementation 'androidx.test.ext:junit:1.1.1'
+
+    implementation project(':library')
+    api project(path: ':libraries:lib2')
+    api project(path: ':libraries:lib1')
+
+    implementation project(':javalib')
+
+    //测试依赖，只有test的red渠道才会添加
+    testRedImplementation 'junit:junit:4.13'
+
+}
+
+
+task printName {
+    println("this is app")
 }

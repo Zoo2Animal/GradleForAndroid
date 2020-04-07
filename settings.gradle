@@ -1,2 +1,7 @@
 rootProject.name='GradleForAndroid'
 include ':app'
+include ':library'
+include ':libraries:lib1'
+include ':libraries:lib2'
+include ':javalib'
+include ':wear'
