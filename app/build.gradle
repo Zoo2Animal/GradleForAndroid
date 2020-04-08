@@ -179,6 +179,53 @@ task getReleasePassword {
         password = properties.getProperty('release.password')
     }
     println("release password is " + password)
+//    if (!password?.trim()) {
+//        password = new String(System.console().readPassword("\nWhat's the secrect password?"))
+//    }
+
+//    if (!password?.trim()) {
+//        println("Please input password")
+//        password = new String(new Scanner(System.in).nextLine())
+//        pritnln("you input $password")
+//    }
 }
+
+/**
+ * 将上述task hook到release构建，确保执行release构建时，上述task会被执行
+ */
+tasks.whenObjectAdded { theTask ->
+    if (theTask.name.equals("packageRelease")) {
+        theTask.dependsOn("getReleasePassword")
+    }
+}
+
+/**
+ * 访问所有的application类型的variants
+ * libraryVariants需要放在plugin为com.android.library的gradle文件下执行
+ */
+android.applicationVariants.all { variant ->
+    println("application variant = [$variant]")
+
+    //这里将所有构建的apk文件，名字统一修改为versionName.apk
+    variant.outputs.all { output ->
+        outputFileName = "${variant.name}-${variant.versionName}.apk"
+    }
+
+    //之类为每一个install task创建run task
+    if (variant.install) {
+        tasks.create(name: "run${variant.name.capitalize()}", dependsOn: variant.install) {
+            description "Installs the ${variant.description} and runs the main launcher activity."
+//            println("Installs the ${variant.description} and runs the main launcher activity.")
+            //添加run task后，执行adb的start指令来运行launcher activity
+            doFirst {
+                exec {
+                    executable = 'adb'
+                    args = ['shell', 'am', 'start', '-n', "${android.defaultConfig.applicationId}/.MainActivity"]
+                }
+            }
+        }
+    }
+}
+
 
 

@@ -35,3 +35,11 @@ dependencies {
 task printName {
     println("this is lib1")
 }
+
+/**
+ * 访问所有的library类型的variants
+ */
+android.libraryVariants.all { variant ->
+    println("library variant = [$variant]")
+
+}
